@@ -14,9 +14,10 @@ files, when present, validate against their linked 1.0 schemas.
 ## Canonical tree
 
 ```text
+AGENTS.md                         # optional repository instructions
+<subdirectory>/AGENTS.md          # optional scoped instructions
 .agents/
   manifest.json                 # REQUIRED
-  AGENTS.md                     # optional shared instructions
   tools/
     mcp.json                    # optional MCP server catalogue
   skills/
@@ -29,13 +30,16 @@ Paths are relative to the repository root and use `/` separators. The
 directories `tools` and `skills` are optional when they contain no selected
 content. A skill name MUST match both its directory name and the selected
 skill name. Files not described by this tree are outside the portable
-contract.
+contract. An `AGENTS.md` file applies to its containing directory and
+descendants. Starting at the repository root, a consumer MUST apply each
+`AGENTS.md` encountered on the path to the working file, with the nearest file
+taking precedence when instructions conflict.
 
 `.agents/manifest.json` MUST validate against
 [`schemas/manifest.schema.json`](schemas/manifest.schema.json) in the
 [Agents-Spec repository](https://github.com/Open-Dot-Agents/Agents-Spec).
-The `$schema` property is optional and is omitted until an immutable published
-schema URL is available.
+The `$schema` property is optional. Producers SHOULD use the immutable schema
+URL from the `Agents-Spec` `v1.0.0` tag after that tag is published.
 `.agents/tools/mcp.json`, if present, MUST validate against
 [`schemas/mcp.schema.json`](schemas/mcp.schema.json). JSON Schema validation
 does not establish cross-file references; the additional checks in this
@@ -64,9 +68,10 @@ The minimal interoperable starter manifest is:
 It selects content categories for this repository; it is not a map of
 adapter-specific profiles. 1.0 defines `instructions`, `mcp`, and `skills`.
 An implementation MUST validate each string's portable-name syntax and MUST
-not require all three names. It MAY preserve an unknown well-formed profile
-for a newer standard, but MUST report it as unsupported before activation if
-that profile affects selected content.
+not require all three names. A 1.0 consumer MUST reject an unknown selected
+profile before activation. A producer MAY preserve an unknown well-formed
+profile while migrating data, but MUST report that it cannot validate or
+activate the profile.
 
 The manifest schema validates known fields strictly while permitting unknown
 top-level fields. Producers MAY add such fields for forward compatibility;
@@ -77,11 +82,16 @@ as native adapter configuration.
 
 ### Instructions
 
-When `profiles` contains `instructions`, an implementation MUST load
-`.agents/AGENTS.md` if it exists. If it is absent, no shared instructions are
-loaded. When it is absent from `profiles`, an implementation MUST NOT load
-that file. `AGENTS.md` is portable
-Markdown; this standard intentionally does not impose a front-matter format.
+When `profiles` contains `instructions`, a consumer MUST load the applicable
+root and nested `AGENTS.md` files using the scope and precedence rule above.
+The root file is optional. An adapter MUST NOT create a second canonical copy
+under `.agents/`. `AGENTS.md` is portable Markdown; this standard intentionally
+does not impose a front-matter format.
+
+The profile declaration defines content managed by this standard. It cannot
+disable instruction discovery performed independently by a native harness.
+An adapter MUST report such native behavior as a limitation instead of
+claiming that an absent profile suppresses it.
 
 ### MCP
 
@@ -110,16 +120,19 @@ represent. The defined names are:
 
 ```text
 instructions
+instructions.scoped
 skills
 mcp.stdio
 mcp.remote
 mcp.envRef
 ```
 
-`requires` in the manifest declares capabilities required by that
-configuration. An adapter MUST verify every required capability before
+`instructions.scoped` means that nested discovery and nearest-file precedence
+are preserved. `requires` in the manifest declares capabilities required by
+that configuration. An adapter MUST verify every required capability before
 activation. Independently, an `instructions` profile requires `instructions`,
-the `skills` profile requires `skills`, the `mcp` profile containing `stdio`
+nested instruction files require `instructions.scoped`, the `skills` profile
+requires `skills`, the `mcp` profile containing `stdio`
 or `remote` servers requires its corresponding MCP capability, and environment
 references require `mcp.envRef`.
 
@@ -154,6 +167,20 @@ filesystem, network, or process access. An adapter MUST NOT infer credentials
 from arbitrary instruction text or skill content.
 
 ## Conformance
+
+Conformance claims MUST identify one of these classes:
+
+- **repository**: portable files satisfy this specification;
+- **producer**: emitted portable files satisfy this specification;
+- **consumer**: selected profiles are loaded with the required semantics; or
+- **adapter**: a named standard and harness version preserves declared
+  capabilities without silent loss.
+
+Machine-readable results MUST validate against
+[`schemas/conformance-result.schema.json`](schemas/conformance-result.schema.json).
+A result identifies the implementation and standard version, conformance
+class, fixture outcomes, and diagnostics. Diagnostic codes are stable public
+identifiers; human messages are not an interoperability interface.
 
 The [basic example](../../examples/basic/) is a valid 1.0 tree. The
 [invalid fixtures](../../examples/invalid/README.md) are syntactically valid

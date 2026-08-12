@@ -9,6 +9,7 @@ configuration; native paths and formats are not part of this standard.
 - [Normative 1.0 specification](spec/1.0/SPECIFICATION.md)
 - [Manifest JSON Schema](spec/1.0/schemas/manifest.schema.json)
 - [MCP JSON Schema](spec/1.0/schemas/mcp.schema.json)
+- [Conformance result JSON Schema](spec/1.0/schemas/conformance-result.schema.json)
 - [Basic conforming example](examples/basic/)
 - [Invalid schema fixtures](examples/invalid/README.md)
 - [Conformance baseline](conformance/README.md)

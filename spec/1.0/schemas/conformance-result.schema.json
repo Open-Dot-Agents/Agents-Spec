@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Open-Dot-Agents/Agents-Spec/v1.0.0/spec/1.0/schemas/conformance-result.schema.json",
+  "title": "Open-Dot-Agents 1.0 conformance result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "standardVersion", "implementation", "class", "passed", "checks"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "standardVersion": {"const": "1.0.0"},
+    "implementation": {"type": "string", "minLength": 1},
+    "implementationVersion": {"type": "string", "minLength": 1},
+    "class": {"enum": ["repository", "producer", "consumer", "adapter"]},
+    "passed": {"type": "boolean"},
+    "metadata": {"type": "object", "additionalProperties": true},
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "passed"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"},
+          "passed": {"type": "boolean"},
+          "diagnostic": {"type": "string", "pattern": "^ODA-[A-Z]+-[0-9]{4}$"},
+          "message": {"type": "string"}
+        }
+      }
+    }
+  }
+}

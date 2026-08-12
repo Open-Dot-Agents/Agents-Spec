@@ -12,3 +12,7 @@ All notable changes to this specification are documented here.
 - Standard-library conformance baseline for portable tree semantics.
 - Explicit separation between portable specification conformance and native
   adapter support evidence.
+- Root and nested `AGENTS.md` discovery without a duplicate copy under
+  `.agents/`.
+- Defined repository, producer, consumer, and adapter conformance classes with
+  a machine-readable result schema.

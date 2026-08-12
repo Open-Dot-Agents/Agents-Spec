@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Open-Dot-Agents/Agents-Spec/v1.0.0/spec/1.0/schemas/mcp.schema.json",
   "title": "Open-Dot-Agents 1.0 MCP catalogue",
   "type": "object",
   "additionalProperties": false,

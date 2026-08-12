@@ -6,8 +6,11 @@ from __future__ import annotations
 import json
 import re
 import sys
+from argparse import ArgumentParser
 from pathlib import Path
 from urllib.parse import urlparse
+
+from jsonschema import Draft202012Validator, FormatChecker
 
 
 SPEC_ROOT = Path(__file__).resolve().parent.parent
@@ -19,15 +22,27 @@ ENVIRONMENT_REFERENCE = re.compile(
 )
 CAPABILITIES = {
     "instructions",
+    "instructions.scoped",
     "skills",
     "mcp.stdio",
     "mcp.remote",
     "mcp.envRef",
 }
+PROFILES = {"instructions", "mcp", "skills"}
 
 
 class ConformanceError(ValueError):
     """A fixture violates a portable 1.0 rule."""
+
+
+def schema_validate(value: object, schema_name: str, label: str) -> None:
+    schema = load_json(SPEC_ROOT / "spec/1.0/schemas" / schema_name)
+    errors = sorted(
+        Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(value),
+        key=lambda error: list(error.absolute_path),
+    )
+    if errors:
+        raise ConformanceError(f"{label}: JSON Schema: {errors[0].message}")
 
 
 def load_json(path: Path) -> object:
@@ -43,6 +58,7 @@ def require(condition: bool, message: str) -> None:
 
 
 def validate_manifest(value: object, label: str) -> list[str]:
+    schema_validate(value, "manifest.schema.json", label)
     require(isinstance(value, dict), f"{label}: manifest must be an object")
     require(value.get("version") == "1.0.0", f"{label}: version must be 1.0.0")
 
@@ -64,6 +80,10 @@ def validate_manifest(value: object, label: str) -> list[str]:
         len(profiles) == len(set(profiles)),
         f"{label}: profiles must not contain duplicates",
     )
+    require(
+        set(profiles).issubset(PROFILES),
+        f"{label}: profiles contain an unsupported 1.0 profile",
+    )
     requires = value.get("requires", [])
     require(
         isinstance(requires, list)
@@ -78,6 +98,7 @@ def validate_manifest(value: object, label: str) -> list[str]:
 
 
 def validate_mcp(value: object, label: str) -> None:
+    schema_validate(value, "mcp.schema.json", label)
     require(isinstance(value, dict), f"{label}: MCP catalogue must be an object")
     require(
         set(value).issubset({"$schema", "mcpServers"}) and "mcpServers" in value,
@@ -175,6 +196,12 @@ def validate_tree(root: Path) -> None:
     agents = root / ".agents"
     label = str(root.relative_to(SPEC_ROOT))
     profiles = validate_manifest(load_json(agents / "manifest.json"), label)
+    if "instructions" in profiles:
+        for instructions in root.rglob("AGENTS.md"):
+            require(
+                instructions.is_file() and is_within(instructions, root),
+                f"{label}: unsafe AGENTS.md path {instructions}",
+            )
     if "mcp" in profiles:
         validate_mcp(load_json(agents / "tools" / "mcp.json"), label)
     if "skills" in profiles:
@@ -184,6 +211,9 @@ def validate_tree(root: Path) -> None:
 def validate_schema_documents() -> None:
     manifest_schema = load_json(SPEC_ROOT / "spec/1.0/schemas/manifest.schema.json")
     mcp_schema = load_json(SPEC_ROOT / "spec/1.0/schemas/mcp.schema.json")
+    result_schema = load_json(
+        SPEC_ROOT / "spec/1.0/schemas/conformance-result.schema.json"
+    )
     require(
         isinstance(manifest_schema, dict)
         and manifest_schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema",
@@ -193,6 +223,11 @@ def validate_schema_documents() -> None:
         isinstance(mcp_schema, dict)
         and mcp_schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema",
         "MCP schema has an invalid 2020-12 identifier",
+    )
+    require(
+        isinstance(result_schema, dict)
+        and result_schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema",
+        "conformance result schema has an invalid 2020-12 declaration",
     )
 
 
@@ -208,7 +243,7 @@ def validate_repository_starter() -> None:
         profiles == ["instructions"],
         "SPEC starter: only its checked-in AGENTS.md is selected",
     )
-    require((agents / "AGENTS.md").is_file(), "SPEC starter: AGENTS.md is missing")
+    require((SPEC_ROOT / "AGENTS.md").is_file(), "SPEC starter: root AGENTS.md is missing")
     validate_tree(SPEC_ROOT)
 
 
@@ -217,7 +252,7 @@ def validate_independent_selection(root: Path, profile: str) -> None:
     label = str(root.relative_to(SPEC_ROOT))
     profiles = validate_manifest(load_json(agents / "manifest.json"), label)
     require(profiles == [profile], f"{label}: expected only the {profile} profile")
-    has_instructions = (agents / "AGENTS.md").is_file()
+    has_instructions = (root / "AGENTS.md").is_file()
     has_mcp = (agents / "tools" / "mcp.json").is_file()
     has_skills = (agents / "skills").is_dir()
     expected = {
@@ -232,62 +267,97 @@ def validate_independent_selection(root: Path, profile: str) -> None:
     validate_tree(root)
 
 
-def expect_valid(label: str, check: object) -> bool:
+RESULTS: list[dict[str, object]] = []
+
+
+def record(label: str, passed: bool, error: object | None = None) -> bool:
+    result: dict[str, object] = {"id": label, "passed": passed}
+    if error is not None:
+        result["diagnostic"] = "ODA-CONFORMANCE-0001"
+        result["message"] = str(error)
+    RESULTS.append(result)
+    return passed
+
+
+def expect_valid(label: str, check: object, quiet: bool = False) -> bool:
     try:
         check()
     except (ConformanceError, OSError, ValueError) as error:
-        print(f"FAIL {label}: {error}")
-        return False
-    print(f"PASS {label}")
-    return True
+        if not quiet:
+            print(f"FAIL {label}: {error}")
+        return record(label, False, error)
+    if not quiet:
+        print(f"PASS {label}")
+    return record(label, True)
 
 
-def expect_invalid(label: str, check: object) -> bool:
+def expect_invalid(label: str, check: object, quiet: bool = False) -> bool:
     try:
         check()
     except (ConformanceError, OSError, ValueError):
-        print(f"PASS {label}")
-        return True
-    print(f"FAIL {label}: fixture was accepted")
-    return False
+        if not quiet:
+            print(f"PASS {label}")
+        return record(label, True)
+    error = "fixture was accepted"
+    if not quiet:
+        print(f"FAIL {label}: {error}")
+    return record(label, False, error)
 
 
 def main() -> int:
+    parser = ArgumentParser()
+    parser.add_argument("--format", choices=("text", "json"), default="text")
+    args = parser.parse_args()
+    quiet = args.format == "json"
     checks = []
-    checks.append(expect_valid("schema JSON", validate_schema_documents))
-    checks.append(expect_valid("canonical starter manifest", validate_canonical_manifest))
-    checks.append(expect_valid("SPEC starter tree", validate_repository_starter))
+    checks.append(expect_valid("schema-json", validate_schema_documents, quiet))
+    checks.append(expect_valid("canonical-manifest", validate_canonical_manifest, quiet))
+    checks.append(expect_valid("spec-starter", validate_repository_starter, quiet))
 
-    checks.append(expect_valid("basic example", lambda: validate_tree(SPEC_ROOT / "examples/basic")))
+    checks.append(expect_valid("example-basic", lambda: validate_tree(SPEC_ROOT / "examples/basic"), quiet))
     for name in ("instructions", "mcp", "skills"):
         root = SPEC_ROOT / f"conformance/fixtures/selection-{name}"
         checks.append(
             expect_valid(
-                f"independent {name} selection",
+                f"selection-{name}",
                 lambda root=root, name=name: validate_independent_selection(root, name),
+                quiet,
             )
         )
 
     for path in sorted((SPEC_ROOT / "examples/invalid").glob("manifest-*.json")):
         checks.append(
             expect_invalid(
-                f"invalid manifest {path.name}",
+                f"invalid-manifest-{path.stem}",
                 lambda path=path: validate_manifest(load_json(path), str(path)),
+                quiet,
             )
         )
     for path in sorted((SPEC_ROOT / "examples/invalid").glob("mcp-*.json")):
         checks.append(
             expect_invalid(
-                f"invalid MCP {path.name}",
+                f"invalid-mcp-{path.stem}",
                 lambda path=path: validate_mcp(load_json(path), str(path)),
+                quiet,
             )
         )
     for name in ("unsafe-skill-name", "unsafe-skill-path"):
         root = SPEC_ROOT / f"conformance/fixtures/invalid/{name}"
-        checks.append(expect_invalid(f"invalid {name}", lambda root=root: validate_tree(root)))
+        checks.append(expect_invalid(f"invalid-{name}", lambda root=root: validate_tree(root), quiet))
 
     passed = sum(checks)
-    print(f"{passed}/{len(checks)} conformance checks passed")
+    if quiet:
+        print(json.dumps({
+            "schemaVersion": "1.0.0",
+            "standardVersion": "1.0.0",
+            "implementation": "open-dot-agents-python-runner",
+            "implementationVersion": "1.0.0",
+            "class": "repository",
+            "passed": passed == len(checks),
+            "checks": RESULTS,
+        }, indent=2))
+    else:
+        print(f"{passed}/{len(checks)} conformance checks passed")
     return 0 if passed == len(checks) else 1
 
 

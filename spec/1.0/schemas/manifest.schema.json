@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Open-Dot-Agents/Agents-Spec/v1.0.0/spec/1.0/schemas/manifest.schema.json",
   "title": "Open-Dot-Agents 1.0 manifest",
   "type": "object",
   "additionalProperties": true,
@@ -30,12 +31,17 @@
   "$defs": {
     "profileName": {
       "type": "string",
-      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+      "enum": [
+        "instructions",
+        "mcp",
+        "skills"
+      ]
     },
     "capability": {
       "type": "string",
       "enum": [
         "instructions",
+        "instructions.scoped",
         "skills",
         "mcp.stdio",
         "mcp.remote",

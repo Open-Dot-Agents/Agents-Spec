@@ -1,13 +1,20 @@
 # Open-Dot-Agents 1.0 conformance baseline
 
-Run the fixture baseline with only the Python standard library:
+Install the pinned Draft 2020-12 validator and run the fixture baseline:
 
 ```sh
+python3 -m pip install -r conformance/requirements.txt
 python3 conformance/run.py
 ```
 
-The runner checks that the shipped JSON Schemas parse, validates the canonical
-starter manifest and existing JSON fixtures, and checks portable tree
+For the portable machine-readable result contract, run:
+
+```sh
+python3 conformance/run.py --format json
+```
+
+The runner applies the full JSON Schemas with format checking, validates the
+canonical starter manifest and existing JSON fixtures, and checks portable tree
 semantics that JSON Schema cannot express. It emits one `PASS` or `FAIL` line
 per check and exits non-zero on failure.
 
@@ -16,6 +23,8 @@ per check and exits non-zero on failure.
 - `fixtures/canonical-manifest.json` is the interoperable starter manifest.
 - `fixtures/selection-*` select exactly one portable content profile and
   contain only that profile's portable content.
+- The instructions fixture includes root and nested `AGENTS.md` files to
+  demonstrate scoped discovery.
 - `fixtures/invalid` contains trees that must be rejected for unsafe skill
   names or skill paths. The unsafe-path fixture intentionally uses a symlink
   from `SKILL.md` outside its skill directory.
