@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "repository": {
+      "type": "stdio",
+      "command": "repository-mcp",
+      "args": [
+        "serve"
+      ],
+      "env": {
+        "REPOSITORY_TOKEN": "urn:open-dot-agents:env:REPOSITORY_TOKEN"
+      }
+    }
+  }
+}

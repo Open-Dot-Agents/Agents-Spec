@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Open-Dot-Agents 1.0 manifest",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "version",
+    "profiles"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "version": {
+      "const": "1.0.0"
+    },
+    "requires": {
+      "$ref": "#/$defs/capabilities"
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/profileName"
+      },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "profileName": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "capability": {
+      "type": "string",
+      "enum": [
+        "instructions",
+        "skills",
+        "mcp.stdio",
+        "mcp.remote",
+        "mcp.envRef"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/capability"
+      },
+      "uniqueItems": true
+    }
+  }
+}

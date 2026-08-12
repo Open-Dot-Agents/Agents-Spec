@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Open-Dot-Agents 1.0 MCP catalogue",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mcpServers"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "mcpServers": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/serverName"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/server"
+      }
+    }
+  },
+  "$defs": {
+    "serverName": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "environmentReference": {
+      "type": "string",
+      "format": "uri-reference",
+      "pattern": "^urn:open-dot-agents:env:[A-Za-z_][A-Za-z0-9_]*$"
+    },
+    "environment": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/environmentReference"
+      }
+    },
+    "headers": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[!#$%&'*+\\-.^_`|~0-9A-Za-z]+$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/environmentReference"
+      }
+    },
+    "stdioServer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "command"
+      ],
+      "properties": {
+        "type": {
+          "const": "stdio"
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "env": {
+          "$ref": "#/$defs/environment"
+        }
+      }
+    },
+    "remoteServer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "url"
+      ],
+      "properties": {
+        "type": {
+          "const": "remote"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "headers": {
+          "$ref": "#/$defs/headers"
+        }
+      }
+    },
+    "server": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/stdioServer"
+        },
+        {
+          "$ref": "#/$defs/remoteServer"
+        }
+      ]
+    }
+  }
+}

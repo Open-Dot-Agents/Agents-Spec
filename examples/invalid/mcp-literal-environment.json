@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "repository": {
+      "type": "stdio",
+      "command": "repository-mcp",
+      "env": {
+        "REPOSITORY_TOKEN": "not-a-secret-reference"
+      }
+    }
+  }
+}

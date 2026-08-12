@@ -1,0 +1,11 @@
+version: 3
+
+tasks:
+  default:
+    cmds:
+      - task: verify
+
+  verify:
+    desc: Run specification release-readiness checks
+    cmds:
+      - python3 conformance/run.py
