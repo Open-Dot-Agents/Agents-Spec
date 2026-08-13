@@ -1,8 +1,6 @@
 {
   "version": "1.0.0",
-  "profiles": [
-    "instructions"
-  ],
+  "profiles": [],
   "requires": [
     "instructions",
     "instructions.scoped"

@@ -11,6 +11,6 @@ They are fixtures for schema-validation tests, not examples to copy.
 | `mcp-insecure-remote.json` | MCP | Remote URLs must use HTTPS. |
 | `mcp-mixed-server.json` | MCP | A server cannot combine `stdio` and `remote` fields. |
 
-Cross-file failures, such as a selected `mcp` profile without a catalogue, are
+Cross-file failures, such as a selected `tools` profile without a catalogue, are
 specified in the normative document and require a conformance checker in
 addition to JSON Schema.

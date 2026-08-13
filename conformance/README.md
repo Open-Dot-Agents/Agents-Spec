@@ -21,10 +21,11 @@ per check and exits non-zero on failure.
 ## Fixture layout
 
 - `fixtures/canonical-manifest.json` is the interoperable starter manifest.
-- `fixtures/selection-*` select exactly one portable content profile and
-  contain only that profile's portable content.
-- The instructions fixture includes root and nested `AGENTS.md` files to
-  demonstrate scoped discovery.
+- `fixtures/selection-*` select exactly one optional portable content profile
+  and contain only that profile's content in addition to mandatory
+  `.agents/AGENTS.md` instructions.
+- `fixtures/baseline-instructions` includes canonical instructions and a nested
+  `AGENTS.md` file to demonstrate scoped discovery without an optional profile.
 - `fixtures/invalid` contains trees that must be rejected for unsafe skill
   names or skill paths. The unsafe-path fixture intentionally uses a symlink
   from `SKILL.md` outside its skill directory.

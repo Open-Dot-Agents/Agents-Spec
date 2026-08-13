@@ -28,7 +28,7 @@ CAPABILITIES = {
     "mcp.remote",
     "mcp.envRef",
 }
-PROFILES = {"instructions", "mcp", "skills"}
+PROFILES = {"tools", "skills"}
 
 
 class ConformanceError(ValueError):
@@ -69,8 +69,8 @@ def validate_manifest(value: object, label: str) -> list[str]:
     )
     profiles = value.get("profiles")
     require(
-        isinstance(profiles, list) and profiles,
-        f"{label}: profiles must be a non-empty array",
+        isinstance(profiles, list),
+        f"{label}: profiles must be an array",
     )
     require(
         all(isinstance(profile, str) and PROFILE_NAME.fullmatch(profile) for profile in profiles),
@@ -196,13 +196,17 @@ def validate_tree(root: Path) -> None:
     agents = root / ".agents"
     label = str(root.relative_to(SPEC_ROOT))
     profiles = validate_manifest(load_json(agents / "manifest.json"), label)
-    if "instructions" in profiles:
-        for instructions in root.rglob("AGENTS.md"):
-            require(
-                instructions.is_file() and is_within(instructions, root),
-                f"{label}: unsafe AGENTS.md path {instructions}",
-            )
-    if "mcp" in profiles:
+    canonical_instructions = agents / "AGENTS.md"
+    require(
+        canonical_instructions.is_file() and is_within(canonical_instructions, agents),
+        f"{label}: canonical .agents/AGENTS.md is missing or unsafe",
+    )
+    for instructions in root.rglob("AGENTS.md"):
+        require(
+            instructions.is_file() and is_within(instructions, root),
+            f"{label}: unsafe AGENTS.md path {instructions}",
+        )
+    if "tools" in profiles:
         validate_mcp(load_json(agents / "tools" / "mcp.json"), label)
     if "skills" in profiles:
         validate_skills(agents / "skills", label)
@@ -240,10 +244,10 @@ def validate_repository_starter() -> None:
     agents = SPEC_ROOT / ".agents"
     profiles = validate_manifest(load_json(agents / "manifest.json"), "SPEC starter")
     require(
-        profiles == ["instructions"],
-        "SPEC starter: only its checked-in AGENTS.md is selected",
+        profiles == [],
+        "SPEC starter: no optional content profile is selected",
     )
-    require((SPEC_ROOT / "AGENTS.md").is_file(), "SPEC starter: root AGENTS.md is missing")
+    require((agents / "AGENTS.md").is_file(), "SPEC starter: canonical AGENTS.md is missing")
     validate_tree(SPEC_ROOT)
 
 
@@ -252,16 +256,15 @@ def validate_independent_selection(root: Path, profile: str) -> None:
     label = str(root.relative_to(SPEC_ROOT))
     profiles = validate_manifest(load_json(agents / "manifest.json"), label)
     require(profiles == [profile], f"{label}: expected only the {profile} profile")
-    has_instructions = (root / "AGENTS.md").is_file()
-    has_mcp = (agents / "tools" / "mcp.json").is_file()
+    has_instructions = (agents / "AGENTS.md").is_file()
+    has_tools = (agents / "tools" / "mcp.json").is_file()
     has_skills = (agents / "skills").is_dir()
     expected = {
-        "instructions": (True, False, False),
-        "mcp": (False, True, False),
-        "skills": (False, False, True),
+        "tools": (True, True, False),
+        "skills": (True, False, True),
     }[profile]
     require(
-        (has_instructions, has_mcp, has_skills) == expected,
+        (has_instructions, has_tools, has_skills) == expected,
         f"{label}: content does not match its selected profile",
     )
     validate_tree(root)
@@ -315,7 +318,12 @@ def main() -> int:
     checks.append(expect_valid("spec-starter", validate_repository_starter, quiet))
 
     checks.append(expect_valid("example-basic", lambda: validate_tree(SPEC_ROOT / "examples/basic"), quiet))
-    for name in ("instructions", "mcp", "skills"):
+    checks.append(expect_valid(
+        "baseline-instructions",
+        lambda: validate_tree(SPEC_ROOT / "conformance/fixtures/baseline-instructions"),
+        quiet,
+    ))
+    for name in ("tools", "skills"):
         root = SPEC_ROOT / f"conformance/fixtures/selection-{name}"
         checks.append(
             expect_valid(

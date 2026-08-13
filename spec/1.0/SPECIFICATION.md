@@ -8,15 +8,15 @@ are to be interpreted as described by RFC 2119 and RFC 8174.
 
 An **implementation** is a producer, validator, or adapter. An **adapter**
 projects this portable contract to a particular agent harness. A repository is
-conforming when its selected profile satisfies this document and both JSON
-files, when present, validate against their linked 1.0 schemas.
+conforming when its canonical instructions and selected profiles satisfy this
+document and both JSON files, when present, validate against their linked 1.0
+schemas.
 
 ## Canonical tree
 
 ```text
-AGENTS.md                         # optional repository instructions
-<subdirectory>/AGENTS.md          # optional scoped instructions
 .agents/
+  AGENTS.md                     # REQUIRED repository instructions
   manifest.json                 # REQUIRED
   tools/
     mcp.json                    # optional MCP server catalogue
@@ -24,16 +24,20 @@ AGENTS.md                         # optional repository instructions
     <skill-name>/
       SKILL.md                  # one portable skill
       ...                       # optional skill-local supporting files
+AGENTS.md -> .agents/AGENTS.md   # recommended compatibility link
+<subdirectory>/AGENTS.md         # optional scoped instructions
 ```
 
 Paths are relative to the repository root and use `/` separators. The
 directories `tools` and `skills` are optional when they contain no selected
-content. A skill name MUST match both its directory name and the selected
-skill name. Files not described by this tree are outside the portable
-contract. An `AGENTS.md` file applies to its containing directory and
-descendants. Starting at the repository root, a consumer MUST apply each
-`AGENTS.md` encountered on the path to the working file, with the nearest file
-taking precedence when instructions conflict.
+content. A skill name MUST match its directory name. Files not described by
+this tree are outside the portable contract. `.agents/AGENTS.md` supplies the
+repository instructions and applies to the whole repository. A root
+`AGENTS.md` SHOULD be a relative link to `.agents/AGENTS.md` when a native
+harness discovers only the root path; it is a compatibility projection, not a
+second canonical copy. A nested `AGENTS.md` applies to its containing directory
+and descendants, with the nearest file taking precedence when instructions
+conflict.
 
 `.agents/manifest.json` MUST validate against
 [`schemas/manifest.schema.json`](schemas/manifest.schema.json) in the
@@ -60,15 +64,15 @@ The minimal interoperable starter manifest is:
 ```json
 {
   "version": "1.0.0",
-  "profiles": ["instructions", "mcp", "skills"]
+  "profiles": []
 }
 ```
 
-`profiles` is a non-empty, duplicate-free array of portable profile strings.
-It selects content categories for this repository; it is not a map of
-adapter-specific profiles. 1.0 defines `instructions`, `mcp`, and `skills`.
-An implementation MUST validate each string's portable-name syntax and MUST
-not require all three names. A 1.0 consumer MUST reject an unknown selected
+`profiles` is a duplicate-free array of optional portable content directories.
+It is not a map of adapter-specific profiles. 1.0 defines `tools` and `skills`,
+matching the names below `.agents/`. Canonical instructions are mandatory and
+therefore are not a profile. An implementation MUST validate each profile
+string's portable-name syntax. A 1.0 consumer MUST reject an unknown selected
 profile before activation. A producer MAY preserve an unknown well-formed
 profile while migrating data, but MUST report that it cannot validate or
 activate the profile.
@@ -78,27 +82,22 @@ top-level fields. Producers MAY add such fields for forward compatibility;
 consumers MUST ignore fields they do not understand and MUST NOT treat them
 as native adapter configuration.
 
-## Portable content profiles
+## Portable content
 
 ### Instructions
 
-When `profiles` contains `instructions`, a consumer MUST load the applicable
-root and nested `AGENTS.md` files using the scope and precedence rule above.
-The root file is optional. An adapter MUST NOT create a second canonical copy
-under `.agents/`. `AGENTS.md` is portable Markdown; this standard intentionally
-does not impose a front-matter format.
+A consumer MUST load `.agents/AGENTS.md` and applicable nested `AGENTS.md`
+files using the scope and precedence rule above. An adapter MAY create a root
+compatibility link or an equivalent native projection, but MUST NOT treat it as
+a second canonical source. `AGENTS.md` is portable Markdown; this standard
+intentionally does not impose a front-matter format.
 
-The profile declaration defines content managed by this standard. It cannot
-disable instruction discovery performed independently by a native harness.
-An adapter MUST report such native behavior as a limitation instead of
-claiming that an absent profile suppresses it.
-
-### MCP
+### Tools
 
 `.agents/tools/mcp.json` is a catalogue, not an instruction to start servers
-unless `profiles` contains `mcp`. Selecting `mcp` exposes the complete
+unless `profiles` contains `tools`. Selecting `tools` exposes the complete
 catalogue and requires that catalogue to exist. Implementations MUST NOT start
-or expose catalogue servers when `mcp` is absent from `profiles`.
+or expose catalogue servers when `tools` is absent from `profiles`.
 
 The MCP schema defines direct `stdio` and HTTPS `remote` server definitions.
 `stdio` commands MUST be invoked as an executable plus argument vector, not
@@ -130,9 +129,9 @@ mcp.envRef
 `instructions.scoped` means that nested discovery and nearest-file precedence
 are preserved. `requires` in the manifest declares capabilities required by
 that configuration. An adapter MUST verify every required capability before
-activation. Independently, an `instructions` profile requires `instructions`,
+activation. Independently, canonical instructions require `instructions`,
 nested instruction files require `instructions.scoped`, the `skills` profile
-requires `skills`, the `mcp` profile containing `stdio`
+requires `skills`, the `tools` profile containing `stdio`
 or `remote` servers requires its corresponding MCP capability, and environment
 references require `mcp.envRef`.
 
@@ -172,7 +171,8 @@ Conformance claims MUST identify one of these classes:
 
 - **repository**: portable files satisfy this specification;
 - **producer**: emitted portable files satisfy this specification;
-- **consumer**: selected profiles are loaded with the required semantics; or
+- **consumer**: canonical instructions and selected profiles are loaded with
+  the required semantics; or
 - **adapter**: a named standard and harness version preserves declared
   capabilities without silent loss.
 
