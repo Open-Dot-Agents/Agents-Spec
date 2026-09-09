@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Open-Dot-Agents/Agents-Spec/v1.0.0/spec/1.0/schemas/hooks.schema.json",
+  "title": "Open-Dot-Agents 1.0 hook catalogue",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "hooks"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "description": {
+      "type": "string"
+    },
+    "disableAllHooks": {
+      "type": "boolean"
+    },
+    "hooks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SessionStart": {
+          "$ref": "#/$defs/matcherGroups"
+        },
+        "SessionEnd": {
+          "$ref": "#/$defs/matcherGroups"
+        },
+        "UserPromptSubmit": {
+          "$ref": "#/$defs/matcherGroups"
+        },
+        "PreToolUse": {
+          "$ref": "#/$defs/matcherGroups"
+        },
+        "PostToolUse": {
+          "$ref": "#/$defs/matcherGroups"
+        },
+        "PermissionRequest": {
+          "$ref": "#/$defs/matcherGroups"
+        },
+        "Stop": {
+          "$ref": "#/$defs/matcherGroups"
+        },
+        "SubagentStart": {
+          "$ref": "#/$defs/matcherGroups"
+        },
+        "SubagentStop": {
+          "$ref": "#/$defs/matcherGroups"
+        },
+        "PreCompact": {
+          "$ref": "#/$defs/matcherGroups"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "matcherGroups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/matcherGroup"
+      }
+    },
+    "matcherGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hooks"
+      ],
+      "properties": {
+        "matcher": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hooks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/commandHook"
+          }
+        }
+      }
+    },
+    "commandHook": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "command"
+      ],
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "timeoutSec": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

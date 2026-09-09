@@ -27,8 +27,21 @@ CAPABILITIES = {
     "mcp.stdio",
     "mcp.remote",
     "mcp.envRef",
+    "hooks.command",
 }
-PROFILES = {"tools", "skills"}
+PROFILES = {"tools", "hooks", "skills"}
+HOOK_EVENTS = {
+    "SessionStart",
+    "SessionEnd",
+    "UserPromptSubmit",
+    "PreToolUse",
+    "PostToolUse",
+    "PermissionRequest",
+    "Stop",
+    "SubagentStart",
+    "SubagentStop",
+    "PreCompact",
+}
 
 
 class ConformanceError(ValueError):
@@ -160,6 +173,34 @@ def validate_mcp(value: object, label: str) -> None:
             raise ConformanceError(f"{label}: server {name} has an invalid type")
 
 
+def validate_hooks(value: object, label: str) -> None:
+    schema_validate(value, "hooks.schema.json", label)
+    require(isinstance(value, dict), f"{label}: hook catalogue must be an object")
+    require(
+        set(value).issubset({"$schema", "description", "disableAllHooks", "hooks"}) and "hooks" in value,
+        f"{label}: hook catalogue has unknown or missing properties",
+    )
+    hooks = value["hooks"]
+    require(isinstance(hooks, dict), f"{label}: hooks must be an object")
+    for event, groups in hooks.items():
+        require(event in HOOK_EVENTS, f"{label}: unsupported hook event {event!r}")
+        require(isinstance(groups, list), f"{label}: hook event {event} must be an array")
+        for group in groups:
+            require(isinstance(group, dict), f"{label}: hook event {event} contains a non-object group")
+            require(set(group).issubset({"matcher", "hooks"}), f"{label}: hook event {event} has unsupported group fields")
+            if "matcher" in group:
+                require(isinstance(group["matcher"], str) and group["matcher"], f"{label}: hook event {event} has invalid matcher")
+            handlers = group.get("hooks")
+            require(isinstance(handlers, list) and handlers, f"{label}: hook event {event} requires handlers")
+            for handler in handlers:
+                require(isinstance(handler, dict), f"{label}: hook event {event} contains a non-object handler")
+                require(set(handler).issubset({"type", "command", "timeoutSec"}), f"{label}: hook event {event} has unsupported handler fields")
+                require(handler.get("type") == "command", f"{label}: hook event {event} only supports command handlers")
+                require(isinstance(handler.get("command"), str) and handler["command"].strip(), f"{label}: hook event {event} has invalid command")
+                if "timeoutSec" in handler:
+                    require(isinstance(handler["timeoutSec"], int) and handler["timeoutSec"] >= 0, f"{label}: hook event {event} has invalid timeoutSec")
+
+
 def is_within(path: Path, parent: Path) -> bool:
     try:
         path.resolve().relative_to(parent.resolve())
@@ -208,6 +249,8 @@ def validate_tree(root: Path) -> None:
         )
     if "tools" in profiles:
         validate_mcp(load_json(agents / "tools" / "mcp.json"), label)
+    if "hooks" in profiles:
+        validate_hooks(load_json(agents / "hooks" / "hooks.json"), label)
     if "skills" in profiles:
         validate_skills(agents / "skills", label)
 
@@ -215,6 +258,7 @@ def validate_tree(root: Path) -> None:
 def validate_schema_documents() -> None:
     manifest_schema = load_json(SPEC_ROOT / "spec/1.0/schemas/manifest.schema.json")
     mcp_schema = load_json(SPEC_ROOT / "spec/1.0/schemas/mcp.schema.json")
+    hooks_schema = load_json(SPEC_ROOT / "spec/1.0/schemas/hooks.schema.json")
     result_schema = load_json(
         SPEC_ROOT / "spec/1.0/schemas/conformance-result.schema.json"
     )
@@ -227,6 +271,11 @@ def validate_schema_documents() -> None:
         isinstance(mcp_schema, dict)
         and mcp_schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema",
         "MCP schema has an invalid 2020-12 identifier",
+    )
+    require(
+        isinstance(hooks_schema, dict)
+        and hooks_schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema",
+        "hooks schema has an invalid 2020-12 identifier",
     )
     require(
         isinstance(result_schema, dict)
@@ -258,13 +307,15 @@ def validate_independent_selection(root: Path, profile: str) -> None:
     require(profiles == [profile], f"{label}: expected only the {profile} profile")
     has_instructions = (agents / "AGENTS.md").is_file()
     has_tools = (agents / "tools" / "mcp.json").is_file()
+    has_hooks = (agents / "hooks" / "hooks.json").is_file()
     has_skills = (agents / "skills").is_dir()
     expected = {
-        "tools": (True, True, False),
-        "skills": (True, False, True),
+        "tools": (True, True, False, False),
+        "hooks": (True, False, True, False),
+        "skills": (True, False, False, True),
     }[profile]
     require(
-        (has_instructions, has_tools, has_skills) == expected,
+        (has_instructions, has_tools, has_hooks, has_skills) == expected,
         f"{label}: content does not match its selected profile",
     )
     validate_tree(root)
@@ -317,13 +368,14 @@ def main() -> int:
     checks.append(expect_valid("canonical-manifest", validate_canonical_manifest, quiet))
     checks.append(expect_valid("spec-starter", validate_repository_starter, quiet))
 
+    checks.append(expect_valid("example-hooks", lambda: validate_tree(SPEC_ROOT / "examples/hooks"), quiet))
     checks.append(expect_valid("example-basic", lambda: validate_tree(SPEC_ROOT / "examples/basic"), quiet))
     checks.append(expect_valid(
         "baseline-instructions",
         lambda: validate_tree(SPEC_ROOT / "conformance/fixtures/baseline-instructions"),
         quiet,
     ))
-    for name in ("tools", "skills"):
+    for name in ("tools", "hooks", "skills"):
         root = SPEC_ROOT / f"conformance/fixtures/selection-{name}"
         checks.append(
             expect_valid(
@@ -346,6 +398,14 @@ def main() -> int:
             expect_invalid(
                 f"invalid-mcp-{path.stem}",
                 lambda path=path: validate_mcp(load_json(path), str(path)),
+                quiet,
+            )
+        )
+    for path in sorted((SPEC_ROOT / "examples/invalid").glob("hooks-*.json")):
+        checks.append(
+            expect_invalid(
+                f"invalid-hooks-{path.stem}",
+                lambda path=path: validate_hooks(load_json(path), str(path)),
                 quiet,
             )
         )

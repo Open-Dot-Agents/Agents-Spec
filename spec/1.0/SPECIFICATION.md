@@ -20,6 +20,8 @@ schemas.
   manifest.json                 # REQUIRED
   tools/
     mcp.json                    # optional MCP server catalogue
+  hooks/
+    hooks.json                  # optional lifecycle hook catalogue
   skills/
     <skill-name>/
       SKILL.md                  # one portable skill
@@ -29,8 +31,8 @@ AGENTS.md -> .agents/AGENTS.md   # recommended compatibility link
 ```
 
 Paths are relative to the repository root and use `/` separators. The
-directories `tools` and `skills` are optional when they contain no selected
-content. A skill name MUST match its directory name. Files not described by
+directories `tools`, `hooks`, and `skills` are optional when they contain no
+selected content. A skill name MUST match its directory name. Files not described by
 this tree are outside the portable contract. `.agents/AGENTS.md` supplies the
 repository instructions and applies to the whole repository. A root
 `AGENTS.md` SHOULD be a relative link to `.agents/AGENTS.md` when a native
@@ -45,9 +47,10 @@ conflict.
 The `$schema` property is optional. Producers SHOULD use the immutable schema
 URL from the `Agents-Spec` `v1.0.0` tag after that tag is published.
 `.agents/tools/mcp.json`, if present, MUST validate against
-[`schemas/mcp.schema.json`](schemas/mcp.schema.json). JSON Schema validation
-does not establish cross-file references; the additional checks in this
-document remain required.
+[`schemas/mcp.schema.json`](schemas/mcp.schema.json). `.agents/hooks/hooks.json`,
+if present, MUST validate against [`schemas/hooks.schema.json`](schemas/hooks.schema.json).
+JSON Schema validation does not establish cross-file references; the additional
+checks in this document remain required.
 
 ## Versioning and manifest
 
@@ -69,13 +72,13 @@ The minimal interoperable starter manifest is:
 ```
 
 `profiles` is a duplicate-free array of optional portable content directories.
-It is not a map of adapter-specific profiles. 1.0 defines `tools` and `skills`,
-matching the names below `.agents/`. Canonical instructions are mandatory and
-therefore are not a profile. An implementation MUST validate each profile
-string's portable-name syntax. A 1.0 consumer MUST reject an unknown selected
-profile before activation. A producer MAY preserve an unknown well-formed
-profile while migrating data, but MUST report that it cannot validate or
-activate the profile.
+It is not a map of adapter-specific profiles. 1.0 defines `tools`, `hooks`, and
+`skills`, matching the names below `.agents/`. Canonical instructions are
+mandatory and therefore are not a profile. An implementation MUST validate each
+profile string's portable-name syntax. A 1.0 consumer MUST reject an unknown
+selected profile before activation. A producer MAY preserve an unknown
+well-formed profile while migrating data, but MUST report that it cannot
+validate or activate the profile.
 
 The manifest schema validates known fields strictly while permitting unknown
 top-level fields. Producers MAY add such fields for forward compatibility;
@@ -112,6 +115,46 @@ below that skill directory. The standard does not define automatic skill
 discovery: adapters MUST NOT expose skills when `skills` is absent from
 `profiles` unless the loss rules apply.
 
+### Hooks
+
+`.agents/hooks/hooks.json` is a catalogue of repository-scoped lifecycle hooks,
+not an instruction to activate hooks unless `profiles` contains `hooks`.
+Selecting `hooks` exposes the complete catalogue and requires that file to
+exist. Implementations MUST NOT expose catalogue hooks when `hooks` is absent
+from `profiles` unless the loss rules apply.
+
+The hook schema defines event names in PascalCase to align with the JSON input
+shape used by Claude Code, Codex, and the VS Code-compatible Copilot hook
+format. A hook event contains matcher groups. A matcher group MAY define a
+`matcher` regular-expression string and MUST contain one or more command hook
+handlers. A command hook handler MUST define `type: "command"` and `command`.
+It MAY define `timeoutSec` as a non-negative integer. Omission or zero selects
+the native default timeout; the standard does not promise equal native defaults.
+A command MUST contain at least one non-whitespace character.
+Portable command hooks receive JSON on standard
+input and may communicate with the native harness through exit status, standard
+output, and standard error. This standard does not normalize the event payload
+or output-decision schema across harnesses. Hook scripts that need full
+cross-harness behavior SHOULD restrict themselves to common input fields and
+side effects, or branch on `hook_event_name`.
+
+`disableAllHooks: true` disables the selected catalogue, not unrelated native
+or administrator hooks. The default is false. An adapter MUST preserve this
+state or refuse the projection before writes. A refusal leaves any previous
+native configuration in place; it does not disable previously active hooks.
+To remove owned hooks, remove `hooks` from `profiles` and apply the change.
+Adapters MUST preserve unrelated native settings during removal.
+
+Matcher syntax and event input names remain native. A matcher MUST be a
+non-empty string when present. Omit it to select every occurrence. Adapters
+MUST refuse a matcher on an event that the target does not filter. The hooks
+profile does not promise equal regular-expression engines or tool names.
+
+Adapters MAY map event names, timeout field names, and file locations to their
+native hook format. Adapters MUST refuse activation or report loss before
+activation when a selected hook event, matcher, or command handler cannot be
+represented.
+
 ## Capabilities and loss semantics
 
 Capabilities identify portable features that an adapter can faithfully
@@ -124,6 +167,7 @@ skills
 mcp.stdio
 mcp.remote
 mcp.envRef
+hooks.command
 ```
 
 `instructions.scoped` means that nested discovery and nearest-file precedence
@@ -134,6 +178,7 @@ nested instruction files require `instructions.scoped`, the `skills` profile
 requires `skills`, the `tools` profile containing `stdio`
 or `remote` servers requires its corresponding MCP capability, and environment
 references require `mcp.envRef`.
+The `hooks` profile requires `hooks.command`.
 
 An adapter MUST preserve selected content and the meaning of environment
 references. If it cannot do so, it MUST refuse activation or report every

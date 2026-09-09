@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"from pathlib import Path; Path('.oda-hook-ran').write_text('SessionStart')\"",
+            "timeoutSec": 5
+          }
+        ]
+      }
+    ]
+  }
+}

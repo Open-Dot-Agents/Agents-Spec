@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Run a prompt hook"
+          }
+        ]
+      }
+    ]
+  }
+}

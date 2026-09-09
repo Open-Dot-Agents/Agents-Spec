@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "UnsupportedEvent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo unsupported"
+          }
+        ]
+      }
+    ]
+  }
+}

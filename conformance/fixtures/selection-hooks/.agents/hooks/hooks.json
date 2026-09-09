@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".agents/hooks/scripts/session-start.sh",
+            "timeoutSec": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".agents/hooks/scripts/pre-tool-use.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

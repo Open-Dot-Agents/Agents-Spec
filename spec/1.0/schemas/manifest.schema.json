@@ -32,6 +32,7 @@
       "type": "string",
       "enum": [
         "tools",
+        "hooks",
         "skills"
       ]
     },
@@ -43,7 +44,8 @@
         "skills",
         "mcp.stdio",
         "mcp.remote",
-        "mcp.envRef"
+        "mcp.envRef",
+        "hooks.command"
       ]
     },
     "capabilities": {
