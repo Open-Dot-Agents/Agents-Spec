@@ -36,3 +36,9 @@ every harness has the same runtime behavior. Native-harness projection and
 black-box validation remain adapter-specific. Adapters must also make their
 capability-loss declarations for any content they cannot preserve, as required
 by the normative specification.
+
+## Experimental security schemas
+
+Run `python3 conformance/security_draft.py` to check the separate 1.1 draft
+fixtures. These checks do not modify the 1.0 suite or ratify the draft. The
+Workbench security test checks the same fixtures through the public Go CLI.

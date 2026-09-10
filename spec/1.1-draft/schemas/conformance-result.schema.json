@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:open-dot-agents:draft:1.1:conformance-result",
+  "title": "Open-Dot-Agents draft conformance result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "standardVersion",
+    "implementation",
+    "class",
+    "passed",
+    "checks"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.1.0-draft.1"
+    },
+    "standardVersion": {
+      "const": "1.1.0-draft.1"
+    },
+    "implementation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "implementationVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "class": {
+      "enum": [
+        "repository",
+        "producer",
+        "consumer",
+        "adapter"
+      ]
+    },
+    "passed": {
+      "type": "boolean"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "passed"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*(?![\\s\\S])"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "diagnostic": {
+            "type": "string",
+            "pattern": "^ODA-[A-Z]+-[0-9]{4}(?![\\s\\S])"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

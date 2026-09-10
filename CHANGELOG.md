@@ -2,6 +2,14 @@
 
 All notable changes to this specification are documented here.
 
+## Unreleased experimental proposal
+
+- Add separate 1.1.0-draft.1 permissions and sandbox schemas, semantics,
+  example, and conformance fixtures. The proposal is not ratified.
+- Add an explicit optional process runtime grant and a narrow Codex Linux
+  example. Existing draft files retain their previous requirements.
+- Preserve the 1.0 specification and schemas without changes.
+
 ## [1.0.0] - 2026-08-12
 
 ### Added

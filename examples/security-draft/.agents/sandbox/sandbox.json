@@ -1,0 +1,38 @@
+{
+  "version": "1.1.0-draft.1",
+  "coverage": [
+    "builtin-tools",
+    "shell",
+    "hooks",
+    "mcp-local",
+    "mcp-remote",
+    "lsp",
+    "delegation"
+  ],
+  "filesystem": {
+    "default": "deny",
+    "rules": [
+      {
+        "path": ".",
+        "access": "write"
+      },
+      {
+        "path": "private",
+        "access": "deny"
+      }
+    ]
+  },
+  "network": {
+    "default": "deny",
+    "rules": [],
+    "local": "deny",
+    "private": "deny",
+    "web": "deny",
+    "remoteMCP": "deny"
+  },
+  "credentials": {
+    "environment": "none",
+    "allow": [],
+    "files": "deny"
+  }
+}

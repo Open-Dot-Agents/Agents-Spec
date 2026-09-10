@@ -1,0 +1,55 @@
+{
+  "version": "1.1.0-draft.1",
+  "coverage": [
+    "shell"
+  ],
+  "filesystem": {
+    "default": "read",
+    "runtime": [
+      "process"
+    ],
+    "rules": [
+      {
+        "path": ".",
+        "access": "write"
+      },
+      {
+        "path": ".agents",
+        "access": "read"
+      },
+      {
+        "path": ".codex",
+        "access": "read"
+      },
+      {
+        "path": ".git",
+        "access": "read"
+      },
+      {
+        "path": "private",
+        "access": "deny"
+      },
+      {
+        "path": "docs",
+        "access": "read"
+      },
+      {
+        "path": "docs/edit",
+        "access": "write"
+      }
+    ]
+  },
+  "network": {
+    "default": "deny",
+    "rules": [],
+    "local": "deny",
+    "private": "deny",
+    "web": "allow",
+    "remoteMCP": "allow"
+  },
+  "credentials": {
+    "environment": "inherit",
+    "allow": [],
+    "files": "inherit"
+  }
+}

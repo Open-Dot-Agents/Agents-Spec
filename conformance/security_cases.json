@@ -1,0 +1,895 @@
+[
+  {
+    "id": "valid-manifest",
+    "document": "manifest",
+    "valid": true
+  },
+  {
+    "id": "valid-permissions",
+    "document": "permissions",
+    "valid": true
+  },
+  {
+    "id": "valid-sandbox",
+    "document": "sandbox",
+    "valid": true
+  },
+  {
+    "id": "only-permissions",
+    "document": "manifest",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "profiles"
+        ],
+        "value": [
+          "permissions"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "only-sandbox",
+    "document": "manifest",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "profiles"
+        ],
+        "value": [
+          "sandbox"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "stable-version-security-profiles",
+    "document": "manifest",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "version"
+        ],
+        "value": "1.0.0"
+      }
+    ]
+  },
+  {
+    "id": "unknown-profile",
+    "document": "manifest",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "profiles"
+        ],
+        "value": [
+          "unsafe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "duplicate-profile",
+    "document": "manifest",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "profiles"
+        ],
+        "value": [
+          "permissions",
+          "permissions"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unknown-manifest-field",
+    "document": "manifest",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "native"
+        ],
+        "value": {}
+      }
+    ]
+  },
+  {
+    "id": "permissions-wrong-version",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "version"
+        ],
+        "value": "1.1.0"
+      }
+    ]
+  },
+  {
+    "id": "permissions-unknown-field",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "native"
+        ],
+        "value": {}
+      }
+    ]
+  },
+  {
+    "id": "permissions-empty-coverage",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "coverage"
+        ],
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": "permissions-unknown-coverage",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "coverage"
+        ],
+        "value": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "permissions-duplicate-coverage",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "coverage"
+        ],
+        "value": [
+          "shell",
+          "shell"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "permissions-bad-extension",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "extensions"
+        ],
+        "value": {
+          "codex": {
+            "required": true,
+            "data": {}
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "permissions-required-extension",
+    "document": "permissions",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "extensions"
+        ],
+        "value": {
+          "com.example.policy": {
+            "required": true,
+            "data": {
+              "mode": "strict"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "permissions-optional-extension",
+    "document": "permissions",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "extensions"
+        ],
+        "value": {
+          "com.example.policy": {
+            "required": false,
+            "data": {}
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "sandbox-wrong-version",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "version"
+        ],
+        "value": "1.1.0"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-unknown-field",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "native"
+        ],
+        "value": {}
+      }
+    ]
+  },
+  {
+    "id": "sandbox-empty-coverage",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "coverage"
+        ],
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": "sandbox-unknown-coverage",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "coverage"
+        ],
+        "value": [
+          "other"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-duplicate-coverage",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "coverage"
+        ],
+        "value": [
+          "shell",
+          "shell"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-bad-extension",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "extensions"
+        ],
+        "value": {
+          "codex": {
+            "required": true,
+            "data": {}
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "sandbox-required-extension",
+    "document": "sandbox",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "extensions"
+        ],
+        "value": {
+          "com.example.policy": {
+            "required": true,
+            "data": {
+              "mode": "strict"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "sandbox-optional-extension",
+    "document": "sandbox",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "extensions"
+        ],
+        "value": {
+          "com.example.policy": {
+            "required": false,
+            "data": {}
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "permissions-unknown-decision",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "default"
+        ],
+        "value": "always"
+      }
+    ]
+  },
+  {
+    "id": "permissions-null-rules",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "rules"
+        ],
+        "value": null
+      }
+    ]
+  },
+  {
+    "id": "permissions-tool-with-args",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "rules",
+          0,
+          "kind"
+        ],
+        "value": "tool"
+      }
+    ]
+  },
+  {
+    "id": "permissions-missing-args",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "rules",
+          0,
+          "args"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "permissions-empty-args",
+    "document": "permissions",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "rules",
+          0,
+          "args"
+        ],
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": "permissions-duplicate-key",
+    "document": "permissions",
+    "valid": false,
+    "raw": "{\"version\":\"1.1.0-draft.1\",\"coverage\":[\"shell\"],\"default\":\"deny\",\"default\":\"allow\",\"rules\":[]}"
+  },
+  {
+    "id": "sandbox-invalid-path-31",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "../escape"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-invalid-path-32",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "/etc"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-invalid-path-33",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "a/../b"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-invalid-path-34",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "a//b"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-invalid-path-35",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "./a"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-invalid-path-36",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "a\\b"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-invalid-path-37",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "a/"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-invalid-path-38",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "a/*"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-invalid-path-39",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "a/.."
+      }
+    ]
+  },
+  {
+    "id": "sandbox-invalid-port",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "network",
+          "rules"
+        ],
+        "value": [
+          {
+            "host": "example.com",
+            "ports": [
+              0
+            ],
+            "effect": "deny"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-duplicate-port",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "network",
+          "rules"
+        ],
+        "value": [
+          {
+            "host": "example.com",
+            "ports": [
+              443,
+              443
+            ],
+            "effect": "deny"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-wildcard-host",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "network",
+          "rules"
+        ],
+        "value": [
+          {
+            "host": "*.example.com",
+            "ports": [
+              443
+            ],
+            "effect": "allow"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-credential-value",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "credentials",
+          "allow"
+        ],
+        "value": [
+          "TOKEN=value"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-missing-private",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "network",
+          "private"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "sandbox-dotfiles",
+    "document": "sandbox",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          1,
+          "path"
+        ],
+        "value": ".env"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-integer-port-spelling",
+    "document": "sandbox",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "network",
+          "rules"
+        ],
+        "value": [
+          {
+            "host": "example.com",
+            "ports": [
+              443.0,
+              1000.0
+            ],
+            "effect": "deny"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-fractional-port",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "network",
+          "rules"
+        ],
+        "value": [
+          {
+            "host": "example.com",
+            "ports": [
+              443.5
+            ],
+            "effect": "deny"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-string-port",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "network",
+          "rules"
+        ],
+        "value": [
+          {
+            "host": "example.com",
+            "ports": [
+              "443"
+            ],
+            "effect": "deny"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "permissions-case-sensitive-key",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "default"
+        ],
+        "remove": true
+      },
+      {
+        "path": [
+          "Default"
+        ],
+        "value": "allow"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-case-sensitive-nested-key",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "network",
+          "default"
+        ],
+        "remove": true
+      },
+      {
+        "path": [
+          "network",
+          "Default"
+        ],
+        "value": "allow"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-newline-path",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "rules",
+          0,
+          "path"
+        ],
+        "value": "private\n"
+      }
+    ]
+  },
+  {
+    "id": "permissions-unicode-space",
+    "document": "permissions",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "rules",
+          0,
+          "name"
+        ],
+        "value": "git\u00a0status"
+      }
+    ]
+  },
+  {
+    "id": "sandbox-runtime-process",
+    "document": "sandbox",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "runtime"
+        ],
+        "value": [
+          "process"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-runtime-unknown",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "runtime"
+        ],
+        "value": [
+          "shared-temp"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sandbox-runtime-duplicate",
+    "document": "sandbox",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "filesystem",
+          "runtime"
+        ],
+        "value": [
+          "process",
+          "process"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "codex-linux-example-manifest",
+    "document": "manifest",
+    "example": "codex-linux-security",
+    "valid": true
+  },
+  {
+    "id": "codex-linux-example-permissions",
+    "document": "permissions",
+    "example": "codex-linux-security",
+    "valid": true
+  },
+  {
+    "id": "codex-linux-example-sandbox",
+    "document": "sandbox",
+    "example": "codex-linux-security",
+    "valid": true
+  }
+]

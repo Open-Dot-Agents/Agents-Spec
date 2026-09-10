@@ -1,0 +1,28 @@
+{
+  "version": "1.1.0-draft.1",
+  "coverage": [
+    "builtin-tools",
+    "shell",
+    "hooks",
+    "mcp-local",
+    "mcp-remote",
+    "lsp",
+    "delegation"
+  ],
+  "default": "ask",
+  "rules": [
+    {
+      "kind": "process",
+      "name": "git",
+      "args": [
+        "status"
+      ],
+      "effect": "allow"
+    },
+    {
+      "kind": "tool",
+      "name": "web.fetch",
+      "effect": "deny"
+    }
+  ]
+}

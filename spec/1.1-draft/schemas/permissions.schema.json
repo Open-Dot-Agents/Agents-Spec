@@ -1,0 +1,129 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1.1.0-draft.1"
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "builtin-tools",
+          "shell",
+          "hooks",
+          "mcp-local",
+          "mcp-remote",
+          "lsp",
+          "delegation"
+        ]
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9-]*(?:\\.[a-z][a-z0-9-]*)+(?![\\s\\S])"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "required": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "required",
+          "data"
+        ]
+      }
+    },
+    "default": {
+      "type": "string",
+      "enum": [
+        "deny",
+        "ask",
+        "allow"
+      ]
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "tool",
+              "process"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[^\\s\\x00-\\x1f]+(?![\\s\\S])"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[^\\x00]*(?![\\s\\S])"
+            }
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "deny",
+              "ask",
+              "allow"
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "effect"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "process"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "args"
+              ]
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "args"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "version",
+    "coverage",
+    "default",
+    "rules"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:open-dot-agents:draft:1.1:permissions",
+  "title": "Open-Dot-Agents 1.1.0-draft.1 permissions"
+}
