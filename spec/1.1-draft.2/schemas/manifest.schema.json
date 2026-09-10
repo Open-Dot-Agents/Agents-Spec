@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:open-dot-agents:draft:1.1.2:manifest",
+  "title": "Open-Dot-Agents 1.1.0-draft.2 manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "profiles"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "version": {
+      "const": "1.1.0-draft.2"
+    },
+    "requires": {
+      "$ref": "#/$defs/capabilities"
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/profileName"
+      },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "profileName": {
+      "type": "string",
+      "enum": [
+        "tools",
+        "hooks",
+        "skills",
+        "permissions",
+        "sandbox",
+        "native",
+        "plugins"
+      ]
+    },
+    "capability": {
+      "type": "string",
+      "enum": [
+        "instructions",
+        "instructions.scoped",
+        "skills",
+        "mcp.stdio",
+        "mcp.remote",
+        "mcp.envRef",
+        "hooks.command",
+        "permissions",
+        "sandbox"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/capability"
+      },
+      "uniqueItems": true
+    }
+  }
+}

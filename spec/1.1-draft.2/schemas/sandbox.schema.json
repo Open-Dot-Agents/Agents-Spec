@@ -1,0 +1,233 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1.1.0-draft.2"
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "builtin-tools",
+          "shell",
+          "hooks",
+          "mcp-local",
+          "mcp-remote",
+          "lsp",
+          "delegation"
+        ]
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9-]*(?:\\.[a-z][a-z0-9-]*)+(?![\\s\\S])"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "required": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "required",
+          "data"
+        ]
+      }
+    },
+    "filesystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "type": "string",
+          "enum": [
+            "deny",
+            "read",
+            "write"
+          ]
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^(?:\\.|\\.?[A-Za-z0-9_@+-][A-Za-z0-9_.@+-]*(?:/\\.?[A-Za-z0-9_@+-][A-Za-z0-9_.@+-]*)*)(?![\\s\\S])"
+              },
+              "access": {
+                "type": "string",
+                "enum": [
+                  "deny",
+                  "read",
+                  "write"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "access"
+            ]
+          }
+        },
+        "runtime": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "process"
+            ]
+          }
+        }
+      },
+      "required": [
+        "default",
+        "rules"
+      ]
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "type": "string",
+          "enum": [
+            "deny",
+            "ask",
+            "allow"
+          ]
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "host": {
+                "type": "string",
+                "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?(?![\\s\\S])"
+              },
+              "ports": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 65535
+                }
+              },
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "deny",
+                  "ask",
+                  "allow"
+                ]
+              }
+            },
+            "required": [
+              "host",
+              "ports",
+              "effect"
+            ]
+          }
+        },
+        "local": {
+          "type": "string",
+          "enum": [
+            "deny",
+            "ask",
+            "allow"
+          ]
+        },
+        "private": {
+          "type": "string",
+          "enum": [
+            "deny",
+            "ask",
+            "allow"
+          ]
+        },
+        "web": {
+          "type": "string",
+          "enum": [
+            "deny",
+            "ask",
+            "allow"
+          ]
+        },
+        "remoteMCP": {
+          "type": "string",
+          "enum": [
+            "deny",
+            "ask",
+            "allow"
+          ]
+        }
+      },
+      "required": [
+        "default",
+        "rules",
+        "local",
+        "private",
+        "web",
+        "remoteMCP"
+      ]
+    },
+    "credentials": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "environment": {
+          "type": "string",
+          "enum": [
+            "none",
+            "inherit"
+          ]
+        },
+        "allow": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?![\\s\\S])"
+          },
+          "uniqueItems": true
+        },
+        "files": {
+          "type": "string",
+          "enum": [
+            "deny",
+            "inherit"
+          ]
+        }
+      },
+      "required": [
+        "environment",
+        "allow",
+        "files"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "coverage",
+    "filesystem",
+    "network",
+    "credentials"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:open-dot-agents:draft:1.1.2:sandbox",
+  "title": "Open-Dot-Agents 1.1.0-draft.2 sandbox"
+}

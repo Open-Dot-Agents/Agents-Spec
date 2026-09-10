@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:open-dot-agents:draft:1.1.2:native",
+  "title": "Native profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "namespace",
+    "harness_version",
+    "scope",
+    "required",
+    "artifacts"
+  ],
+  "properties": {
+    "namespace": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "harness_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "enum": [
+        "project",
+        "user"
+      ]
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "source"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "pattern": "^(?!\\.{1,2}(?:/|$))[A-Za-z0-9_.@+-]+(?:/(?!\\.{1,2}(?:/|$))[A-Za-z0-9_.@+-]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^(?!\\.{1,2}(?:/|$))[A-Za-z0-9_.@+-]+(?:/(?!\\.{1,2}(?:/|$))[A-Za-z0-9_.@+-]+)*$"
+          }
+        }
+      }
+    }
+  }
+}
