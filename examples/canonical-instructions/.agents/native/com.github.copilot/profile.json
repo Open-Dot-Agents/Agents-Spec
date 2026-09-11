@@ -1,0 +1,16 @@
+{
+  "namespace": "com.github.copilot",
+  "harness_version": "=1.0.83",
+  "scope": "project",
+  "required": true,
+  "artifacts": [
+    {
+      "kind": "canonical-instructions",
+      "source": "AGENTS.md"
+    },
+    {
+      "kind": "instructions",
+      "source": "copilot-instructions.md"
+    }
+  ]
+}

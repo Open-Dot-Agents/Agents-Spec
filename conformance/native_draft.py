@@ -17,6 +17,25 @@ def main():
     profile = json.loads((BASE / 'native/com.openai.codex/profile.json').read_text())
     validators = {name: Draft202012Validator(json.loads((SCHEMAS / (name + '.schema.json')).read_text())) for name in ('manifest', 'native')}
     cases = [('manifest', manifest, True), ('native', profile, True)]
+    instructions = ROOT / 'examples/native-agent-instructions/.agents'
+    cases.append(('manifest', json.loads((instructions / 'manifest.json').read_text()), True))
+    instruction_profile = json.loads((instructions / 'native/com.github.copilot/profile.json').read_text())
+    cases.append(('native', instruction_profile, True))
+    canonical = ROOT / 'examples/canonical-instructions/.agents'
+    cases.append(('manifest', json.loads((canonical/'manifest.json').read_text()), True))
+    binding = json.loads((canonical/'native/com.github.copilot/profile.json').read_text())
+    cases.append(('native', binding, True))
+    for field, value in [('source', 'other.md'), ('name', 'AGENTS.md'), ('name', '')]:
+        item = copy.deepcopy(binding)
+        item['artifacts'][0][field] = value
+        cases.append(('native', item, False))
+    for target in ('../AGENTS.md', '/etc/AGENTS.md'):
+        item = copy.deepcopy(instruction_profile)
+        item['artifacts'][0]['name'] = target
+        cases.append(('native', item, False))
+    item = copy.deepcopy(instruction_profile)
+    item['artifacts'][0]['output'] = '/etc/AGENTS.md'
+    cases.append(('native', item, False))
     for key, value in [('namespace', 'invalid'), ('scope', 'system'), ('harness_version', ''), ('required', 'yes'), ('output', '/etc/config')]:
         item = copy.deepcopy(profile); item[key] = value; cases.append(('native', item, False))
     for key in profile:

@@ -1,0 +1,9 @@
+{
+  "namespace": "com.github.copilot",
+  "harness_version": "=1.0.83",
+  "scope": "user",
+  "required": true,
+  "artifacts": [
+    {"kind": "instructions", "source": "policy/local.md"}
+  ]
+}

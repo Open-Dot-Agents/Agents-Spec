@@ -12,8 +12,9 @@ The manifest can select `native`. Each namespace has one
 
 A profile records `namespace`, `harness_version`, `scope`, `required`, and
 `artifacts`. An artifact records `kind`, `source`, and, when needed, `name`.
-Sources are regular files below the namespace directory. Paths must not contain
-symlinks, parent segments, empty segments, or absolute paths.
+Sources are regular files below the namespace directory, except for the fixed
+canonical instruction binding defined below. Paths must not contain symlinks,
+parent segments, empty segments, or absolute paths.
 
 The adapter registry determines the output location from the artifact kind,
 selected scope, and native home. Profile metadata cannot set an output path.
@@ -30,6 +31,77 @@ the native artifact. A processor must refuse duplicate configuration assignments
 including assignments from different canonical profiles. Existing portable
 fields belong in the portable core when conversion is lossless. Native fields
 with no established portable meaning stay in their namespace.
+
+### Native agent instruction files
+
+The Copilot project registry defines the `agent-instructions` artifact kind.
+Its `name` selects exactly one of `AGENTS.md`, `CLAUDE.md`,
+`.claude/CLAUDE.md`, or `GEMINI.md` below the project root. No other path or
+scope is registered for this kind. The source is UTF-8 Markdown below the
+native namespace. A processor must preserve its bytes and target location.
+
+Plain root instructions can enter the portable core when conversion is
+lossless. A processor can preserve a root file with native references, or a
+root body that differs from the Copilot instruction body, as a native agent
+instruction artifact. It must not discard either body or change a reference
+base. Distinct native files are separate assignments; duplicate assignments
+to one target remain an error. Existing canonical portable policy must remain
+protected during additive import.
+
+Referenced project files remain external dependencies. A processor must report
+this requirement. This artifact kind does not authorize arbitrary reference
+targets, reference expansion, file copying outside the registry, or trust
+changes. Native discovery precedence and reference behavior must be reported
+from version-specific evidence. Configuration preservation does not establish
+that every stored instruction is active or that a model follows it.
+
+### Canonical instruction binding
+
+In the Copilot project `native` profile, the `canonical-instructions` artifact
+binds the portable instruction core to root `AGENTS.md`. Its `source` must be
+the literal `AGENTS.md`, which refers to `.agents/AGENTS.md`. The `name` field
+must be absent. No other core source or output path is selectable. This is the
+only defined exception to namespace-relative artifact sources. The canonical
+source must remain a regular file, without indirect links.
+
+The processor projects that core once, at the bound root path. A separate
+`instructions` artifact can then project native Markdown to
+`.github/copilot-instructions.md`. The processor must not create a second
+canonical body in the native namespace. A namespace file named `AGENTS.md` is
+a different source from the fixed core reference; the source string alone does
+not identify those two files.
+
+A verified root link to the same project's canonical instructions remains in
+place. A new target can be a managed regular file with the same body and native
+reference base. The processor must preserve foreign ownership, including when
+the target is a verified link. Native referenced project files remain external.
+
+An unsupported selected binding stays inactive. If this leaves the mandatory
+portable instruction target unmapped, the processor must refuse projection;
+it must not silently choose another location. Removal of a binding must also
+refuse a known change to a native reference base. The user must retain the
+binding or update those references before that transition. These rules do not
+authorize changes to native trust or credential stores.
+
+## Shared skills and native discovery reports
+
+The portable `skills` profile keeps its existing Markdown contract. A native
+projection check is separate from canonical validation. A processor must not
+rewrite skill frontmatter to turn an invalid or unverified native control into
+an active one. It can refuse native projection when the selected client cannot
+discover a skill. The refusal must identify the source and occur before writes.
+It must not claim that it stops direct discovery of an existing project file.
+
+Native plans must distinguish file preservation, discovery, model invocation,
+and user invocation when these have different native meanings. They must report
+known per-field losses and limitations. A warning is not proof of conformance
+or permission enforcement. Reports must not expose credential values.
+
+Unknown annotations in a portable Markdown skill remain source content. A
+processor can preserve these bytes with an explicit unmapped-annotation report;
+this does not activate or map a native-profile setting. The unknown-content
+rules for namespace profiles still apply to those profiles. Shared discovery
+does not establish shared metadata semantics between clients.
 
 ## Plugin selection profile
 
@@ -97,12 +169,36 @@ portable policy files, manifest requirements, and required native status. Equal
 values can be retained; conflicting values must cause refusal. Native import
 does not implicitly migrate stable or draft.1 trees.
 
+Reimport of a registered user instruction target must preserve an existing
+unambiguous artifact declaration and its namespace source. It must not add a
+second assignment merely because the native filename differs from that source.
+Duplicate declarations for the same user instruction target must cause refusal.
+Referenced user instruction files remain external; the processor must report
+that dependency without copying them or granting native trust.
+
+Copilot project import recognizes `.agents/skills/` as a native discovery
+source. It selects complete existing packages in place, without rewriting
+their files or permissions. A missing manifest can establish a new draft.2
+tree only when `.agents/` contains recognized skill packages and, optionally,
+a regular `AGENTS.md`. Other unversioned canonical content must cause refusal.
+An existing manifest must remain subject to its version and validation rules;
+an invalid manifest is not an absent manifest. Existing canonical instructions
+must remain protected. This exception does not apply to user scope or authorize
+imports from parent directories, user homes, or plugin stores.
+
 ## Activation and security
 
 Apply writes configuration. Login, installation, scheduling, and execution stay
 native operations. Plan and capabilities output must distinguish a configuration
 mapping from effective native activation. Reports must not contain credential
 values.
+
+Exclusion of external credentials must not activate the remaining native
+configuration with weaker authentication. It must not restore a native default
+that enables the excluded operation. An adapter must refuse activation or
+explicitly disable the complete affected operation and report that change.
+Required content still blocks apply; an explicit disabled value is not a
+successful mapping of the excluded credentials.
 
 A native extension cannot weaken a selected portable requirement. Mandatory
 `ask` requires approval before every action in its coverage. Native `on-request`

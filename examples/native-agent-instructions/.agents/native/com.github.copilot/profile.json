@@ -1,0 +1,28 @@
+{
+  "namespace": "com.github.copilot",
+  "harness_version": "=1.0.83",
+  "scope": "project",
+  "required": true,
+  "artifacts": [
+    {
+      "kind": "agent-instructions",
+      "name": "AGENTS.md",
+      "source": "agent-instructions/AGENTS.md"
+    },
+    {
+      "kind": "agent-instructions",
+      "name": "CLAUDE.md",
+      "source": "agent-instructions/CLAUDE.md"
+    },
+    {
+      "kind": "agent-instructions",
+      "name": ".claude/CLAUDE.md",
+      "source": "agent-instructions/.claude/CLAUDE.md"
+    },
+    {
+      "kind": "agent-instructions",
+      "name": "GEMINI.md",
+      "source": "agent-instructions/GEMINI.md"
+    }
+  ]
+}

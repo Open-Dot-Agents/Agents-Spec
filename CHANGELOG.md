@@ -4,6 +4,16 @@ All notable changes to this specification are documented here.
 
 ## Unreleased experimental proposal
 
+- Clarify user instruction source preservation during reimport and the external
+  reference boundary. Add a Copilot user instruction example.
+- Draft.2 Copilot project import selects existing `.agents/skills` packages in
+  place. A bare shared skill tree can establish draft.2; malformed manifests,
+  other unversioned content, and existing policy conflicts still refuse.
+- Define draft.2 Copilot project `agent-instructions` artifacts. Preserve
+  fixed native file locations and report external reference dependencies.
+- Define a fixed Copilot `canonical-instructions` binding. Keep the portable
+  source single and retain separate native instruction bodies after relocation.
+
 - Add separate 1.1.0-draft.1 permissions and sandbox schemas, semantics,
   example, and conformance fixtures. The proposal is not ratified.
 - Add an explicit optional process runtime grant and a narrow Codex Linux

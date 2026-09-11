@@ -8,6 +8,7 @@ import re
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from urllib.parse import urlparse
 
 from jsonschema import Draft202012Validator, FormatChecker
@@ -226,11 +227,34 @@ def validate_skills(skills_root: Path, label: str) -> None:
             is_within(skill_file, skill),
             f"{label}: skill path escapes its directory: {skill_file}",
         )
+        try:
+            skill_file.read_bytes().decode("utf-8")
+        except UnicodeDecodeError:
+            require(False, f"{label}: skill {skill.name} must be UTF-8 Markdown")
         for supporting_file in skill.rglob("*"):
             require(
                 is_within(supporting_file, skill),
                 f"{label}: supporting path escapes its skill directory: {supporting_file}",
             )
+
+
+def validate_skill_encoding_fixtures() -> None:
+    with TemporaryDirectory(prefix="oda-skill-encoding-") as temporary:
+        skills = Path(temporary) / "skills"
+        skill = skills / "review"
+        skill.mkdir(parents=True)
+        definition = skill / "SKILL.md"
+        definition.write_bytes("# Review\nRésumé — 日本語.\n".encode("utf-8"))
+        (skill / "asset.bin").write_bytes(b"\xff\xfe")
+        validate_skills(skills, "valid-unicode-skill")
+        for invalid in (b"\xff", b"\xc3", b"\xc0\xaf", b"\xed\xa0\x80"):
+            definition.write_bytes(b"# Review\n" + invalid)
+            try:
+                validate_skills(skills, "invalid-skill-encoding")
+            except ConformanceError as error:
+                require("UTF-8" in str(error), "skill failed for a different reason")
+            else:
+                raise ConformanceError("invalid UTF-8 skill was accepted")
 
 
 def validate_tree(root: Path) -> None:
@@ -367,6 +391,7 @@ def main() -> int:
     checks.append(expect_valid("schema-json", validate_schema_documents, quiet))
     checks.append(expect_valid("canonical-manifest", validate_canonical_manifest, quiet))
     checks.append(expect_valid("spec-starter", validate_repository_starter, quiet))
+    checks.append(expect_valid("skill-encoding", validate_skill_encoding_fixtures, quiet))
 
     checks.append(expect_valid("example-hooks", lambda: validate_tree(SPEC_ROOT / "examples/hooks"), quiet))
     checks.append(expect_valid("example-basic", lambda: validate_tree(SPEC_ROOT / "examples/basic"), quiet))
