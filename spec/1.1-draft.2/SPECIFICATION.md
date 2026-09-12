@@ -83,6 +83,27 @@ refuse a known change to a native reference base. The user must retain the
 binding or update those references before that transition. These rules do not
 authorize changes to native trust or credential stores.
 
+Import must also preserve the reference base of
+`.github/copilot-instructions.md`. A body with potential native file references
+must remain a native `instructions` artifact at that location. A canonical
+root binding can preserve a separate root body or the existing portable core.
+Import must refuse if this binding conflicts with an existing root artifact
+or assigns an unknown reference base to existing portable policy. A processor
+must not infer a root reference base from the presence of a compatibility link
+alone. Plain instruction text can retain its portable mapping.
+
+User `native` profiles for Codex and Copilot can also select the fixed
+`canonical-instructions` binding. Its source is the same portable `AGENTS.md`
+and its `name` must be absent. It projects to `AGENTS.md` in the selected
+Codex home or `copilot-instructions.md` in the selected Copilot home. A second
+assignment to that target must cause refusal. Reimport must preserve the core
+binding and must not create a duplicate namespace instruction file.
+An unmapped selected core binding must cause refusal even when its namespace
+profile is optional. The reference implementation refuses user core content
+that contains `@`, because it has no verified reference-base conversion for
+that content. Explicit native instruction artifacts retain their native
+reference base and external dependency requirements.
+
 ## Shared skills and native discovery reports
 
 The portable `skills` profile keeps its existing Markdown contract. A native
@@ -102,6 +123,20 @@ processor can preserve these bytes with an explicit unmapped-annotation report;
 this does not activate or map a native-profile setting. The unknown-content
 rules for namespace profiles still apply to those profiles. Shared discovery
 does not establish shared metadata semantics between clients.
+
+User skill import must compare complete packages before it adds them to an
+existing core. Identical packages can be retained; disjoint packages can be
+added. Import must refuse a combination of different assets under one package
+name, including with force. Empty layout markers must not remain beside newly
+selected packages. Native name collisions must also be reported before
+activation when directory names do not determine native identity.
+
+User projection must not adopt a partial unowned package to create a mixed
+package. It can update files owned by the same source repository, subject to
+the existing conflict rules. Skill backups must remain outside active skill
+packages in private state storage. Backup and removal operations remain part
+of transactional rollback. Selecting one source home does not authorize an
+implicit scan of other user homes or inherited project directories.
 
 ## Plugin selection profile
 
@@ -140,6 +175,61 @@ existing marketplace package. Local package loading needs separate support and
 conformance evidence; this first selection implementation does not provide it.
 
 ## Scope and ownership
+
+### Global canonical source
+
+A canonical tree can reside at `~/.agents`, where `~` is the absolute user
+home. It uses the same draft.2 manifest, portable profiles, native namespaces,
+and plugin selections as a project tree. Global source selection is separate
+from the native output location. It must not infer permission to modify a
+native home, trust store, or account state.
+
+The reference CLI uses `--global --experimental` to select this tree for
+`init`, `validate`, `import`, `plan`, `apply`, and `sync`. It refuses simultaneous
+`--root` selection. Projection and import use user scope and still require an
+explicit absolute `--native-home`. Global initialization must be transactional,
+use private permissions, and refuse to replace an existing configuration
+format. It must not create a compatibility instruction file in the parent home.
+
+Global values become native user defaults after explicit apply. Project
+commands use the project source and project destinations. Native precedence
+determines the effective user and project configuration; processors must not
+claim one shared merge rule for native settings, skills, or instructions.
+Draft.2 project preflight must discover a versioned global manifest and check
+its portable requirements. A project override cannot weaken or discard them.
+If the processor cannot enforce the combined requirements, it must refuse
+before writes. A malformed global manifest is not an absent manifest. This
+check does not authorize a project operation to update user native files.
+Stable 1.0 and draft.1 discovery are unchanged.
+
+Native schema validation is necessary but not sufficient when a native loader
+has extra value rules. For example, pinned Codex keybinding strings require
+its key and chord grammar. Processors must refuse invalid required values
+before writes and preserve inactive optional source values. Empty binding
+arrays are explicit unbindings and must not become absent settings.
+
+For the matching default native homes, global shared skills can use direct
+`~/.agents/skills` discovery instead of duplicate native packages. Processors
+must report this activation path and require the same native user home context.
+Unselected discoverable content must not be reported as inactive solely because
+its portable profile was omitted.
+
+### Inherited skill sources
+
+A processor can import skills at an explicitly selected parent root and use
+native descendant discovery of that root's canonical `.agents/skills` packages.
+It must preserve complete packages. A child-root import must not implicitly
+copy ancestor packages or take ownership of their assets. Plans must distinguish
+the selected source from external inherited discovery and state whether that
+external discovery is enumerated. Native repository boundaries, local name
+precedence, and existing trust remain native constraints.
+
+The Copilot mapping uses parent `.github/skills` or `.claude/skills` input at
+the selected owning root and canonical `.agents/skills` output at that same
+root. Descendant sessions can discover it directly. A nested Git repository
+can stop inheritance. No per-child package copy or trust mutation is implied.
+
+### Native destinations
 
 Project scope is the default. User scope requires an explicit absolute native
 home. The draft.1 `--codex-home` option retains its original meaning.

@@ -1,0 +1,7 @@
+{
+  "namespace": "com.openai.codex",
+  "harness_version": "=0.154.0",
+  "scope": "user",
+  "required": false,
+  "artifacts": [{"kind": "canonical-instructions", "source": "AGENTS.md"}]
+}

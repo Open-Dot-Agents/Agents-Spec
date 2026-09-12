@@ -47,7 +47,7 @@
           "source": {
             "type": "string",
             "pattern": "^(?!\\.{1,2}(?:/|$))[A-Za-z0-9_.@+-]+(?:/(?!\\.{1,2}(?:/|$))[A-Za-z0-9_.@+-]+)*$",
-            "description": "Namespace-relative regular source file. In the Copilot native profile, canonical-instructions uses the fixed AGENTS.md source from the portable core instead."
+            "description": "Namespace-relative regular source file. Registered canonical-instructions bindings use the fixed AGENTS.md source from the portable core instead: Copilot project scope, or Codex and Copilot user scope."
           },
           "name": {
             "type": "string",
@@ -63,7 +63,7 @@
       "if": {
         "properties": {
           "namespace": {
-            "const": "com.github.copilot"
+            "enum": ["com.github.copilot", "com.openai.codex"]
           }
         },
         "required": [

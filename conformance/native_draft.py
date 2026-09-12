@@ -17,6 +17,15 @@ def main():
     profile = json.loads((BASE / 'native/com.openai.codex/profile.json').read_text())
     validators = {name: Draft202012Validator(json.loads((SCHEMAS / (name + '.schema.json')).read_text())) for name in ('manifest', 'native')}
     cases = [('manifest', manifest, True), ('native', profile, True)]
+    global_root = ROOT / 'examples/global-draft/.agents'
+    cases.append(('manifest', json.loads((global_root/'manifest.json').read_text()), True))
+    for path in (global_root/'native').glob('*/profile.json'):
+        user = json.loads(path.read_text())
+        cases.append(('native', user, True))
+        for field, value in [('source', '../AGENTS.md'), ('source', 'other.md'), ('name', 'AGENTS.md')]:
+            invalid = copy.deepcopy(user)
+            invalid['artifacts'][0][field] = value
+            cases.append(('native', invalid, False))
     instructions = ROOT / 'examples/native-agent-instructions/.agents'
     cases.append(('manifest', json.loads((instructions / 'manifest.json').read_text()), True))
     instruction_profile = json.loads((instructions / 'native/com.github.copilot/profile.json').read_text())

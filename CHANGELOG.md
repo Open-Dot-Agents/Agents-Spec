@@ -4,6 +4,10 @@ All notable changes to this specification are documented here.
 
 ## Unreleased experimental proposal
 
+- Define draft.2 global source selection, fixed user instruction bindings,
+  complete skill package preservation, and explicit inherited source ownership.
+  Add global examples and invalid binding cases. Keep stable 1.0 unchanged.
+
 - Clarify user instruction source preservation during reimport and the external
   reference boundary. Add a Copilot user instruction example.
 - Draft.2 Copilot project import selects existing `.agents/skills` packages in
