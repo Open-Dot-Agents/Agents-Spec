@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'examples/security-draft/.agents'
 SCHEMAS = ROOT / 'spec/1.1-draft/schemas'
 PATHS = {'manifest': 'manifest.json', 'permissions': 'permissions/permissions.json',
-         'sandbox': 'sandbox/sandbox.json'}
+         'sandbox': 'sandbox/sandbox.json', 'development': 'permissions/development.json'}
 
 
 def strict_pairs(pairs):

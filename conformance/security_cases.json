@@ -891,5 +891,566 @@
     "document": "sandbox",
     "example": "codex-linux-security",
     "valid": true
+  },
+  {
+    "id": "development-manifest",
+    "example": "development",
+    "document": "manifest",
+    "valid": true
+  },
+  {
+    "id": "development-permissions",
+    "example": "development",
+    "document": "permissions",
+    "valid": true
+  },
+  {
+    "id": "development-development",
+    "example": "development",
+    "document": "development",
+    "valid": true
+  },
+  {
+    "id": "development-missing-version",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "version"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "development-missing-preset",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "preset"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "development-missing-project_work",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "project_work"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "development-missing-local_commits",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "local_commits"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "development-missing-external_changes",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "external_changes"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "development-missing-destructive_work",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "destructive_work"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "development-missing-protected_paths",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "development-project_work-allow",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "project_work"
+        ],
+        "value": "allow"
+      }
+    ]
+  },
+  {
+    "id": "development-project_work-ask",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "project_work"
+        ],
+        "value": "ask"
+      }
+    ]
+  },
+  {
+    "id": "development-project_work-deny",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "project_work"
+        ],
+        "value": "deny"
+      }
+    ]
+  },
+  {
+    "id": "development-local_commits-allow",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "local_commits"
+        ],
+        "value": "allow"
+      }
+    ]
+  },
+  {
+    "id": "development-local_commits-ask",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "local_commits"
+        ],
+        "value": "ask"
+      }
+    ]
+  },
+  {
+    "id": "development-local_commits-deny",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "local_commits"
+        ],
+        "value": "deny"
+      }
+    ]
+  },
+  {
+    "id": "development-external_changes-allow",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "external_changes"
+        ],
+        "value": "allow"
+      }
+    ]
+  },
+  {
+    "id": "development-external_changes-ask",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "external_changes"
+        ],
+        "value": "ask"
+      }
+    ]
+  },
+  {
+    "id": "development-external_changes-deny",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "external_changes"
+        ],
+        "value": "deny"
+      }
+    ]
+  },
+  {
+    "id": "development-destructive_work-allow",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "destructive_work"
+        ],
+        "value": "allow"
+      }
+    ]
+  },
+  {
+    "id": "development-destructive_work-ask",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "destructive_work"
+        ],
+        "value": "ask"
+      }
+    ]
+  },
+  {
+    "id": "development-destructive_work-deny",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "destructive_work"
+        ],
+        "value": "deny"
+      }
+    ]
+  },
+  {
+    "id": "development-unknown",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "unknown"
+        ],
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "development-bad-version",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "version"
+        ],
+        "value": "2"
+      }
+    ]
+  },
+  {
+    "id": "development-bad-preset",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "preset"
+        ],
+        "value": "anything"
+      }
+    ]
+  },
+  {
+    "id": "development-bad-decision",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "local_commits"
+        ],
+        "value": "automatic"
+      }
+    ]
+  },
+  {
+    "id": "development-null",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "local_commits"
+        ],
+        "value": null
+      }
+    ]
+  },
+  {
+    "id": "development-bad-type",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "external_changes"
+        ],
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "development-invalid-path-0",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "value": [
+          "."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "development-invalid-path-1",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "value": [
+          "../outside"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "development-invalid-path-2",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "value": [
+          "/outside"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "development-invalid-path-3",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "value": [
+          "**/.env"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "development-invalid-path-4",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "value": [
+          ".env",
+          ".env"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "development-invalid-path-5",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "value": [
+          "a/../b"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "development-invalid-path-6",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "value": [
+          "a//b"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "development-invalid-path-7",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "value": [
+          "a\\b"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "development-invalid-path-8",
+    "example": "development",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "protected_paths"
+        ],
+        "value": [
+          ".env\n"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "development-practical-mode",
+    "example": "development-practical",
+    "document": "development",
+    "valid": true
+  },
+  {
+    "id": "development-invalid-enforcement",
+    "example": "development-practical",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "enforcement"
+        ],
+        "value": "automatic"
+      }
+    ]
+  },
+  {
+    "id": "development-null-enforcement",
+    "example": "development-practical",
+    "document": "development",
+    "valid": false,
+    "changes": [
+      {
+        "path": [
+          "enforcement"
+        ],
+        "value": null
+      }
+    ]
+  },
+  {
+    "id": "development-explicit-strict",
+    "example": "development",
+    "document": "development",
+    "valid": true,
+    "changes": [
+      {
+        "path": [
+          "enforcement"
+        ],
+        "value": "strict"
+      }
+    ]
   }
 ]

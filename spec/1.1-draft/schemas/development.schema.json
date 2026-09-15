@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:open-dot-agents:extension:development:1",
+  "title": "Experimental development preset, version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "preset", "project_work", "local_commits", "external_changes", "destructive_work", "protected_paths"],
+  "properties": {
+    "enforcement": {"enum": ["strict", "practical"], "default": "strict"},
+    "version": {"const": "1"},
+    "preset": {"const": "development"},
+    "project_work": {"$ref": "#/$defs/decision"},
+    "local_commits": {"$ref": "#/$defs/decision"},
+    "external_changes": {"$ref": "#/$defs/decision"},
+    "destructive_work": {"$ref": "#/$defs/decision"},
+    "protected_paths": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^\\.?[A-Za-z0-9_@+-][A-Za-z0-9_.@+-]*(/\\.?[A-Za-z0-9_@+-][A-Za-z0-9_.@+-]*)*(?![\\s\\S])"
+      }
+    }
+  },
+  "$defs": {"decision": {"enum": ["allow", "ask", "deny"]}}
+}
