@@ -20,6 +20,10 @@ jobs:
           python-version: '3.14'
       - name: Install conformance validator
         run: python3 -m pip install -r conformance/requirements.txt
+      - name: Lint Python scripts
+        run: |
+          python3 -m pip install ruff==0.16.8
+          python3 -m ruff check conformance
       - name: Run conformance suite
         run: python3 conformance/run.py
       - name: Check experimental security schemas
