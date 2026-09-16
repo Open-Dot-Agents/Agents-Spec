@@ -52,6 +52,11 @@ def main():
     for source in ('../config.toml', '/etc/config', 'dir/../config', 'dir//file', 'dir/./file'):
         item = copy.deepcopy(profile); item['artifacts'][0]['source'] = source; cases.append(('native', item, False))
     item = copy.deepcopy(manifest); item['version'] = '1.1.0-draft.1'; cases.append(('manifest', item, False))
+    model_selection = ROOT / 'examples/native-model-selection'
+    for vendor, namespace in (('codex', 'com.openai.codex'), ('copilot', 'com.github.copilot')):
+        vendor_root = model_selection / vendor / '.agents'
+        cases.append(('manifest', json.loads((vendor_root / 'manifest.json').read_text()), True))
+        cases.append(('native', json.loads((vendor_root / 'native' / namespace / 'profile.json').read_text()), True))
     plugins = ROOT / 'examples/plugins-draft/.agents'
     cases.append(('manifest', json.loads((plugins / 'manifest.json').read_text()), True))
     for path in (plugins / 'plugins').glob('*/profile.json'):

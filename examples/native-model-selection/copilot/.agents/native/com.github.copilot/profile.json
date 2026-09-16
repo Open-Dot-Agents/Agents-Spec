@@ -1,0 +1,12 @@
+{
+  "namespace": "com.github.copilot",
+  "harness_version": "=1.0.84-9",
+  "scope": "project",
+  "required": true,
+  "artifacts": [
+    {
+      "kind": "config",
+      "source": "settings.json"
+    }
+  ]
+}
